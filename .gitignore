@@ -36,5 +36,4 @@ playwright-report/
 test-results/
 
 # 3D Assets
-*.glb
 !*.enc
