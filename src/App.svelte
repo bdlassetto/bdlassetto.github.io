@@ -19,10 +19,12 @@
   let selectedColorHex: number | null = null; // Default 3D value
   let currentPartName: string = "Body"; // Default
   let isAutoRotate = false;
+  let isAutoColor = true;
 
   // Handler for color selection from the specialized component
   function onColorSelected(e: CustomEvent) {
     selectedColorHex = e.detail;
+    isAutoColor = false; // Stop auto-color when user picks one
   }
 
   // Handler for part selection from 3D scene
@@ -100,9 +102,10 @@
     </div>
 
     <ThreeViewer
-      carColor={selectedColorHex}
+      bind:carColor={selectedColorHex}
       on:partSelected={onPartSelected}
       bind:isAutoRotate
+      bind:isAutoColor
     />
 
     <ColorSelector selectedColor="#F0F0F0" on:colorSelected={onColorSelected} />

@@ -38,6 +38,7 @@
 
   // Auto-rotate / Cinematic mode state
   export let isAutoRotate = false;
+  export let isAutoColor = true;
   let lastAutoChangeTime = 0;
   const AUTO_CHANGE_INTERVAL = 8000; // Change camera view every 8 seconds
   const IDLE_TIMEOUT = 20000; // 20 seconds inactivity
@@ -47,6 +48,7 @@
   let _prevAutoRotate = false;
   $: if (isAutoRotate && !_prevAutoRotate) {
     lastAutoChangeTime = Date.now();
+    lastColorChangeTime = Date.now();
   }
   $: _prevAutoRotate = isAutoRotate;
 
@@ -399,7 +401,7 @@
         }
 
         // Color Auto-Change
-        if (now - lastColorChangeTime > COLOR_CHANGE_INTERVAL) {
+        if (isAutoColor && now - lastColorChangeTime > COLOR_CHANGE_INTERVAL) {
           const randomColor =
             AUTO_COLORS[Math.floor(Math.random() * AUTO_COLORS.length)];
           carColor = randomColor;
@@ -491,6 +493,13 @@
       on:click={toggleAutoRotate}
     >
       AUTO {isAutoRotate ? "ON" : "OFF"}
+    </button>
+    <button
+      class="cam-btn"
+      class:active={isAutoColor}
+      on:click={() => (isAutoColor = !isAutoColor)}
+    >
+      COLOR {isAutoColor ? "ON" : "OFF"}
     </button>
   </div>
 </div>
