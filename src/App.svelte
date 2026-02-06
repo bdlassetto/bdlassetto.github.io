@@ -8,11 +8,13 @@
   import { i18n } from "./lib/i18n";
   import ShaderPlayground from "./components/ShaderPlayground.svelte";
   import MusicPlayer from "./components/MusicPlayer.svelte";
+  import AboutModal from "./components/AboutModal.svelte";
 
   // Inicializa o suporte a idiomas
   i18n.initialize();
 
   let showShaderLab = false;
+  let showAbout = false;
   let hasStarted = false;
   let musicPlayerComponent: MusicPlayer;
 
@@ -70,6 +72,12 @@
     {/if}
     <button
       class="btn bg-surface-700 p-2 text-sm text-white hover:bg-surface-600 rounded"
+      on:click={() => (showAbout = true)}
+    >
+      {$_("about.title")}
+    </button>
+    <button
+      class="btn bg-surface-700 p-2 text-sm text-white hover:bg-surface-600 rounded"
       on:click={() => (showShaderLab = !showShaderLab)}
       title={showShaderLab ? "Back to Car" : "Go to Shader Lab"}
     >
@@ -78,6 +86,10 @@
     <LanguageSelector />
     <ThemeToggle />
   </div>
+
+  {#if showAbout}
+    <AboutModal on:close={() => (showAbout = false)} />
+  {/if}
 
   {#if showShaderLab}
     <ShaderPlayground />
