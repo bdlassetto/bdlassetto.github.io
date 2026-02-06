@@ -12,7 +12,7 @@ export const translations = {
     greeting: 'Hello',
     welcome: 'Welcome to the application',
     language: 'Language',
-    'app.title': 'GearGarage 3D Viewer',
+    'app.title': 'BDL CAR VIEWER',
     'app.subtitle': 'Interactive 3D Car Model Viewer',
     'features.title': 'Included Features',
     'features.theme': 'Light/dark theme toggle',
@@ -20,13 +20,13 @@ export const translations = {
     'features.typescript': 'TypeScript support',
     'features.testing': 'Unit and e2e tests',
     'features.i18n': 'Internationalization support',
-    'footer.copyright': '© 2025 GearGarage. Built with Svelte.'
+    'footer.copyright': '© 2025 BDL CAR VIEWER. Built with Svelte.'
   },
   pt: {
     greeting: 'Olá',
     welcome: 'Bem-vindo ao aplicativo',
     language: 'Idioma',
-    'app.title': 'Visualizador 3D GearGarage',
+    'app.title': 'BDL CAR VIEWER',
     'app.subtitle': 'Visualizador Interativo de Modelo de Carro 3D',
     'features.title': 'Recursos Incluídos',
     'features.theme': 'Alternância de tema claro/escuro',
@@ -34,13 +34,13 @@ export const translations = {
     'features.typescript': 'Suporte ao TypeScript',
     'features.testing': 'Testes unitários e e2e',
     'features.i18n': 'Suporte à internacionalização',
-    'footer.copyright': '© 2025 GearGarage. Construído com Svelte.'
+    'footer.copyright': '© 2025 BDL CAR VIEWER. Construído com Svelte.'
   },
   es: {
     greeting: 'Hola',
     welcome: 'Bienvenido a la aplicación',
     language: 'Idioma',
-    'app.title': 'Visor 3D GearGarage',
+    'app.title': 'BDL CAR VIEWER',
     'app.subtitle': 'Visor Interactivo de Modelo de Coche 3D',
     'features.title': 'Características Incluidas',
     'features.theme': 'Alternancia de tema claro/oscuro',
@@ -48,7 +48,7 @@ export const translations = {
     'features.typescript': 'Soporte para TypeScript',
     'features.testing': 'Pruebas unitarias y e2e',
     'features.i18n': 'Soporte para internacionalización',
-    'footer.copyright': '© 2025 GearGarage. Construido con Svelte.'
+    'footer.copyright': '© 2025 BDL CAR VIEWER. Construido con Svelte.'
   }
 };
 

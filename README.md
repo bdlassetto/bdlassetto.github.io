@@ -1,4 +1,4 @@
-# svelte-ts-skeleton-starter
+# BDL CAR VIEWER
 
 A modern template for Svelte projects using TypeScript and Vite as a bundler. This repository serves as a starting point for new Svelte projects with an optimized, ready-to-use configuration.
 
