@@ -6,7 +6,7 @@
 
   const dispatch = createEventDispatcher();
 
-  export let modelPath: string = "/g5_dta_ogay.enc";
+  export let modelPath: string = "/g5_dta_ogay.glb";
   export let backgroundColor: string = "#1a1a1a";
   export let carColor: number | null = null;
 
@@ -200,6 +200,29 @@
     model.position.x = -center.x * scale;
     model.position.y = -center.y * scale;
     model.position.z = -center.z * scale;
+
+    // Set default colors for specific materials
+    model.traverse((o) => {
+      if (o instanceof THREE.Mesh) {
+        const materials = Array.isArray(o.material) ? o.material : [o.material];
+        materials.forEach((mat) => {
+          if (!mat || !mat.name) return;
+          console.log("Found material:", mat.name); // DEBUG: Log material names
+          const lowerName = mat.name.toLowerCase().trim();
+
+          // 03 - default matches (handles 03-default, 03_default, 03 default, etc)
+          if (lowerName.includes("03") && lowerName.includes("default")) {
+            console.log("Applying WHITE to:", mat.name);
+            if (mat.color) mat.color.setHex(0xffffff);
+          }
+          // roda_int matches (handles roda_int, roda int, roda-int, etc)
+          if (lowerName.includes("roda") && lowerName.includes("int")) {
+            console.log("Applying BLACK to:", mat.name);
+            if (mat.color) mat.color.setHex(0x000000);
+          }
+        });
+      }
+    });
 
     scene.add(model);
 

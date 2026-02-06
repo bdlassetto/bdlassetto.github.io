@@ -6,9 +6,12 @@
   import ColorSelector from "./components/ColorSelector.svelte";
   import { _ } from "./lib/i18n";
   import { i18n } from "./lib/i18n";
+  import ShaderPlayground from "./components/ShaderPlayground.svelte";
 
   // Inicializa o suporte a idiomas
   i18n.initialize();
+
+  let showShaderLab = false;
 
   let selectedColorHex: number | null = null; // Default 3D value
   let currentPartName: string = "Body"; // Default
@@ -31,30 +34,41 @@
 
 <main class="h-screen w-screen overflow-hidden bg-surface-900">
   <div class="absolute top-4 right-4 z-50 flex gap-2">
+    <button
+      class="btn bg-surface-700 p-2 text-sm text-white hover:bg-surface-600 rounded"
+      on:click={() => (showShaderLab = !showShaderLab)}
+      title={showShaderLab ? "Back to Car" : "Go to Shader Lab"}
+    >
+      {showShaderLab ? "🚗 Car Viewer" : "🧪 Shader Lab"}
+    </button>
     <LanguageSelector />
     <ThemeToggle />
   </div>
 
-  <div
-    class="pointer-events-none absolute top-4 left-4 z-40 text-surface-50 mix-blend-difference"
-  >
-    <h1 class="h2 font-bold">{$_("app.title")}</h1>
-    <p class="text-sm opacity-80">{$_("app.subtitle")}</p>
+  {#if showShaderLab}
+    <ShaderPlayground />
+  {:else}
+    <div
+      class="pointer-events-none absolute top-4 left-4 z-40 text-surface-50 mix-blend-difference"
+    >
+      <h1 class="h2 font-bold">{$_("app.title")}</h1>
+      <p class="text-sm opacity-80">{$_("app.subtitle")}</p>
 
-    <!-- Dynamic Selection Feedback -->
-    <div class="mt-4 flex items-center gap-2">
-      <span class="text-xs font-bold uppercase tracking-wider opacity-60"
-        >Editing:</span
-      >
-      <span
-        class="rounded bg-surface-800/50 px-2 py-1 font-mono text-primary-400 backdrop-blur-sm"
-      >
-        {currentPartName}
-      </span>
+      <!-- Dynamic Selection Feedback -->
+      <div class="mt-4 flex items-center gap-2">
+        <span class="text-xs font-bold uppercase tracking-wider opacity-60"
+          >Editing:</span
+        >
+        <span
+          class="rounded bg-surface-800/50 px-2 py-1 font-mono text-primary-400 backdrop-blur-sm"
+        >
+          {currentPartName}
+        </span>
+      </div>
     </div>
-  </div>
 
-  <ThreeViewer carColor={selectedColorHex} on:partSelected={onPartSelected} />
+    <ThreeViewer carColor={selectedColorHex} on:partSelected={onPartSelected} />
 
-  <ColorSelector selectedColor="#F0F0F0" on:colorSelected={onColorSelected} />
+    <ColorSelector selectedColor="#F0F0F0" on:colorSelected={onColorSelected} />
+  {/if}
 </main>
