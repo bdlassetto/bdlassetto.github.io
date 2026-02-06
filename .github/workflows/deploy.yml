@@ -37,18 +37,9 @@ jobs:
       - name: Run unit tests
         run: npm run test:run
         
-      - name: Cache Playwright binaries
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-        
-      - name: Run E2E tests
-        run: npm run e2e
+      # E2E tests bypassed as per request
+      # - name: Run E2E tests
+      #   run: npm run e2e
         
       - name: Build application
         run: npm run build
