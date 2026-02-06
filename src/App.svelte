@@ -22,6 +22,5 @@
     <h1 class="h2 font-bold">{$_("app.title")}</h1>
     <p class="text-sm opacity-80">{$_("app.subtitle")}</p>
   </div>
-
   <ThreeViewer />
 </main>
