@@ -11,7 +11,7 @@ test.describe('Internationalization (i18n) Tests', () => {
     const enButton = page.getByRole('button', { name: 'English' });
     const ptButton = page.getByRole('button', { name: 'Português' });
     const esButton = page.getByRole('button', { name: 'Español' });
-    
+
     await expect(enButton).toBeVisible();
     await expect(ptButton).toBeVisible();
     await expect(esButton).toBeVisible();
@@ -20,25 +20,25 @@ test.describe('Internationalization (i18n) Tests', () => {
   test('should allow changing the language', async ({ page }) => {
     // Record the main heading text for later comparison
     const initialTitle = await page.getByRole('heading', { level: 1 }).textContent();
-    
+
     // Change to Portuguese
     const ptButton = page.getByRole('button', { name: 'Português' });
     await ptButton.click();
-    
+
     // Wait for the text to change (may need to adjust this time)
     await page.waitForTimeout(500);
-    
+
     // Check if the text has been updated
     const titleAfterChange = await page.getByRole('heading', { level: 1 }).textContent();
     expect(titleAfterChange).not.toBe(initialTitle);
-    
+
     // Change to Spanish
     const esButton = page.getByRole('button', { name: 'Español' });
     await esButton.click();
-    
+
     // Wait for the text to change
     await page.waitForTimeout(500);
-    
+
     // Check if the text has been updated again
     const titleAfterSecondChange = await page.getByRole('heading', { level: 1 }).textContent();
     expect(titleAfterSecondChange).not.toBe(initialTitle);
@@ -49,37 +49,37 @@ test.describe('Internationalization (i18n) Tests', () => {
     // Expected texts in each language (based on i18n.ts file)
     const expectedTexts = {
       en: {
-        title: 'Svelte Template with Theme',
-        subtitle: 'A basic Svelte application template with light/dark theme support.'
+        title: 'GearGarage 3D Viewer',
+        subtitle: 'Interactive 3D Car Model Viewer'
       },
       pt: {
-        title: 'Template Svelte com Tema',
-        subtitle: 'Um modelo básico de aplicação Svelte com suporte a tema claro/escuro.'
+        title: 'Visualizador 3D GearGarage',
+        subtitle: 'Visualizador Interativo de Modelo de Carro 3D'
       },
       es: {
-        title: 'Plantilla Svelte con Tema',
-        subtitle: 'Un modelo básico de aplicación Svelte con soporte para tema claro/oscuro.'
+        title: 'Visor 3D GearGarage',
+        subtitle: 'Visor Interactivo de Modelo de Coche 3D'
       }
     };
-    
+
     // Test each language
     const languages = [
       { code: 'en', button: page.getByRole('button', { name: 'English' }) },
       { code: 'pt', button: page.getByRole('button', { name: 'Português' }) },
       { code: 'es', button: page.getByRole('button', { name: 'Español' }) }
     ];
-    
+
     for (const lang of languages) {
       // Change to the language
       await lang.button.click();
-      
+
       // Wait for the text to change
       await page.waitForTimeout(500);
-      
+
       // Check the title
       const title = await page.getByRole('heading', { level: 1 }).textContent();
       expect(title).toContain(expectedTexts[lang.code].title);
-      
+
       // Check the subtitle
       const subtitle = page.getByText(expectedTexts[lang.code].subtitle, { exact: true });
       await expect(subtitle).toBeVisible();
@@ -90,19 +90,19 @@ test.describe('Internationalization (i18n) Tests', () => {
     // Change to Portuguese
     const ptButton = page.getByRole('button', { name: 'Português' });
     await ptButton.click();
-    
+
     // Wait for the text to change
     await page.waitForTimeout(500);
-    
+
     // Record the heading text in Portuguese
     const titleInPortuguese = await page.getByRole('heading', { level: 1 }).textContent();
-    
+
     // Reload the page
     await page.reload();
-    
+
     // Wait for the page to fully load after reload
     await page.waitForLoadState('networkidle');
-    
+
     // Check if the text is still in Portuguese after reload
     const titleAfterReload = await page.getByRole('heading', { level: 1 }).textContent();
     expect(titleAfterReload).toBe(titleInPortuguese);

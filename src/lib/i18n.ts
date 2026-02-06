@@ -12,43 +12,43 @@ export const translations = {
     greeting: 'Hello',
     welcome: 'Welcome to the application',
     language: 'Language',
-    'app.title': 'Svelte Template with Theme',
-    'app.subtitle': 'A basic Svelte application template with light/dark theme support.',
+    'app.title': 'GearGarage 3D Viewer',
+    'app.subtitle': 'Interactive 3D Car Model Viewer',
     'features.title': 'Included Features',
     'features.theme': 'Light/dark theme toggle',
     'features.accessibility': 'Basic accessibility',
     'features.typescript': 'TypeScript support',
     'features.testing': 'Unit and e2e tests',
     'features.i18n': 'Internationalization support',
-    'footer.copyright': '© 2025 Svelte Template. Built with Svelte.'
+    'footer.copyright': '© 2025 GearGarage. Built with Svelte.'
   },
   pt: {
     greeting: 'Olá',
     welcome: 'Bem-vindo ao aplicativo',
     language: 'Idioma',
-    'app.title': 'Template Svelte com Tema',
-    'app.subtitle': 'Um modelo básico de aplicação Svelte com suporte a tema claro/escuro.',
+    'app.title': 'Visualizador 3D GearGarage',
+    'app.subtitle': 'Visualizador Interativo de Modelo de Carro 3D',
     'features.title': 'Recursos Incluídos',
     'features.theme': 'Alternância de tema claro/escuro',
     'features.accessibility': 'Acessibilidade básica',
     'features.typescript': 'Suporte ao TypeScript',
     'features.testing': 'Testes unitários e e2e',
     'features.i18n': 'Suporte à internacionalização',
-    'footer.copyright': '© 2025 Template Svelte. Construído com Svelte.'
+    'footer.copyright': '© 2025 GearGarage. Construído com Svelte.'
   },
   es: {
     greeting: 'Hola',
     welcome: 'Bienvenido a la aplicación',
     language: 'Idioma',
-    'app.title': 'Plantilla Svelte con Tema',
-    'app.subtitle': 'Un modelo básico de aplicación Svelte con soporte para tema claro/oscuro.',
+    'app.title': 'Visor 3D GearGarage',
+    'app.subtitle': 'Visor Interactivo de Modelo de Coche 3D',
     'features.title': 'Características Incluidas',
     'features.theme': 'Alternancia de tema claro/oscuro',
     'features.accessibility': 'Accesibilidad básica',
     'features.typescript': 'Soporte para TypeScript',
     'features.testing': 'Pruebas unitarias y e2e',
     'features.i18n': 'Soporte para internacionalización',
-    'footer.copyright': '© 2025 Plantilla Svelte. Construido con Svelte.'
+    'footer.copyright': '© 2025 GearGarage. Construido con Svelte.'
   }
 };
 
@@ -60,7 +60,7 @@ addMessages('es', translations.es);
 // Initialize i18n with appropriate settings
 export function setupI18n() {
   const initialLocale = getInitialLocale();
-  
+
   init({
     fallbackLocale: 'en',
     initialLocale: initialLocale,
@@ -74,14 +74,14 @@ function getInitialLocale() {
   if (typeof window === 'undefined') {
     return 'en';
   }
-  
+
   // Check if there's a preferred language stored in localStorage
   const savedLocale = localStorage.getItem('preferredLanguage');
-  
+
   if (savedLocale && SUPPORTED_LANGUAGES.includes(savedLocale as SupportedLanguage)) {
     return savedLocale;
   }
-  
+
   // Use browser language if available
   const browserLocale = navigator.language.split('-')[0];
   return SUPPORTED_LANGUAGES.includes(browserLocale as SupportedLanguage) ? browserLocale : 'en';
@@ -102,15 +102,15 @@ export function createI18nStore() {
     },
     initialize() {
       // Get saved preference, if any
-      const savedLang = typeof localStorage !== 'undefined' 
-        ? localStorage.getItem('preferredLanguage') as SupportedLanguage 
+      const savedLang = typeof localStorage !== 'undefined'
+        ? localStorage.getItem('preferredLanguage') as SupportedLanguage
         : null;
-      
+
       if (savedLang && SUPPORTED_LANGUAGES.includes(savedLang)) {
         this.setLanguage(savedLang);
         return;
       }
-      
+
       // Try to use browser language
       if (typeof navigator !== 'undefined') {
         const browserLang = navigator.language.split('-')[0] as SupportedLanguage;
@@ -119,7 +119,7 @@ export function createI18nStore() {
           return;
         }
       }
-      
+
       // Use English as default
       this.setLanguage('en');
     },
