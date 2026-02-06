@@ -5,18 +5,18 @@ test.describe('Smoke Test', () => {
         // Navigate to home
         await page.goto('/');
 
-        // Check if the page title mentions the app name (even if i18n changes, some key part might be stable, or just check the title tag)
-        // Actually, let's just check if the main canvas is present.
+        // Check for the container first
+        const container = page.locator('.viewer-container');
+        await expect(container).toBeVisible({ timeout: 10000 });
+
+        // Check for "GearGarage" text which is present in all languages
+        const body = page.locator('body');
+        await expect(body).toContainText('GearGarage', { timeout: 10000 });
 
         // Check for canvas element which represents the Three.js viewer
+        // We increase timeout significantly for slower CI environments or WebGL initialization
         const canvas = page.locator('canvas');
-        await expect(canvas).toBeAttached();
-        await expect(canvas).toBeVisible();
-
-        // Check for "GearGarage" text which seems central to the branding
-        // Using a softer check since i18n might change exact strings
-        // But failing that, we can just check that the body isn't empty.
-        const body = page.locator('body');
-        await expect(body).not.toBeEmpty();
+        await expect(canvas).toBeAttached({ timeout: 30000 });
+        await expect(canvas).toBeVisible({ timeout: 30000 });
     });
 });
