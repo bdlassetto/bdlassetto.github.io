@@ -27,6 +27,26 @@
 
   let selectedMaterialName: string | null = null;
 
+  // Camera animation state
+  let isAnimatingCamera = false;
+  let targetCameraPos = new THREE.Vector3();
+  let targetControlsTarget = new THREE.Vector3();
+  const CAMERA_LERP_FACTOR = 0.1;
+
+  // Preset positions (approximate, tuned for 3.5 scale centered model)
+  const CAMERA_VIEWS = {
+    Front: { pos: [0, 0.5, 4.0], target: [0, 0.2, 0] },
+    Side: { pos: [4.0, 0.5, 0], target: [0, 0.2, 0] },
+    Rear: { pos: [0, 0.8, -4.0], target: [0, 0.2, 0] },
+    "Top-Down": { pos: [0, 5.0, 0], target: [0, 0, 0] },
+    Interior: { pos: [0.3, 0.15, -0.2], target: [0.3, 0.15, 2.0] }, // Driver eye level looking forward
+    Default: { pos: [3, 2, 5], target: [0, 0.5, 0] },
+  };
+
+  const cameraViewKeys = Object.keys(
+    CAMERA_VIEWS,
+  ) as (keyof typeof CAMERA_VIEWS)[];
+
   onMount(() => {
     initThree();
     animate();
@@ -285,8 +305,36 @@
 
   function animate() {
     requestAnimationFrame(animate);
+
     if (controls) controls.update();
+
+    // Smooth camera transition
+    if (isAnimatingCamera && camera && controls) {
+      camera.position.lerp(targetCameraPos, CAMERA_LERP_FACTOR);
+      controls.target.lerp(targetControlsTarget, CAMERA_LERP_FACTOR);
+
+      // Stop animating when close enough
+      if (
+        camera.position.distanceTo(targetCameraPos) < 0.05 &&
+        controls.target.distanceTo(targetControlsTarget) < 0.05
+      ) {
+        isAnimatingCamera = false;
+        controls.enabled = true; // Re-enable user control
+      }
+    }
+
     if (renderer && scene && camera) renderer.render(scene, camera);
+  }
+
+  function setCameraView(viewName: keyof typeof CAMERA_VIEWS) {
+    if (!camera || !controls) return;
+
+    const view = CAMERA_VIEWS[viewName];
+    targetCameraPos.set(view.pos[0], view.pos[1], view.pos[2]);
+    targetControlsTarget.set(view.target[0], view.target[1], view.target[2]);
+
+    isAnimatingCamera = true;
+    controls.enabled = false; // Disable user interaction during transition
   }
 
   function disposeScene(scene: THREE.Scene) {
@@ -309,6 +357,13 @@
   {:else if error}
     <div class="status error">{error}</div>
   {/if}
+  <div class="controls-overlay">
+    {#each cameraViewKeys as view}
+      <button class="cam-btn" on:click={() => setCameraView(view)}>
+        {view}
+      </button>
+    {/each}
+  </div>
 </div>
 
 <style>
@@ -329,5 +384,42 @@
   }
   .error {
     color: #ff4444;
+  }
+
+  .controls-overlay {
+    position: absolute;
+    right: 1.5rem;
+    top: 55%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.6rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+  }
+
+  .cam-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+    width: 80px;
+    text-align: center;
+  }
+
+  .cam-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .cam-btn:active {
+    transform: translateY(0);
   }
 </style>
