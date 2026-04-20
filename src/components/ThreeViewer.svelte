@@ -29,6 +29,7 @@
   let error: string | null = null;
 
   let selectedMaterialName: string | null = null;
+  let isCamExpanded = false;
 
   // Camera animation state
   let isAnimatingCamera = false;
@@ -468,39 +469,67 @@
   }
 </script>
 
-<div class="viewer-container" bind:this={container}>
+<div class="viewer-container" bind:this={container} on:click={onMouseClick}>
   {#if isLoading}
     <div class="status">Loading...</div>
   {:else if error}
     <div class="status error">{error}</div>
   {/if}
+
+  <!-- Desktop: vertical side panel -->
   <div class="controls-overlay">
     {#each cameraViewKeys as view}
       <button
         class="cam-btn"
-        on:click={() => {
-          isAutoRotate = false;
-          setCameraView(view);
-        }}
-      >
-        {view}
-      </button>
+        on:click={() => { isAutoRotate = false; setCameraView(view); }}
+      >{view}</button>
     {/each}
     <div class="divider"></div>
-    <button
-      class="cam-btn"
-      class:active={isAutoRotate}
-      on:click={toggleAutoRotate}
-    >
+    <button class="cam-btn" class:active={isAutoRotate} on:click={toggleAutoRotate}>
       AUTO {isAutoRotate ? "ON" : "OFF"}
     </button>
-    <button
-      class="cam-btn"
-      class:active={isAutoColor}
-      on:click={() => (isAutoColor = !isAutoColor)}
-    >
+    <button class="cam-btn" class:active={isAutoColor} on:click={() => (isAutoColor = !isAutoColor)}>
       COLOR {isAutoColor ? "ON" : "OFF"}
     </button>
+  </div>
+
+  <!-- Mobile: dropdown (hidden on desktop via CSS) -->
+  <div class="cam-mobile-wrapper">
+    <button class="cam-mobile-toggle" on:click={() => (isCamExpanded = !isCamExpanded)}>
+      <span class="cam-icon">{isCamExpanded ? "✕" : "📷"}</span>
+      <span class="cam-label">{isCamExpanded ? "Close" : "Camera"}</span>
+    </button>
+
+    {#if isCamExpanded}
+      <div class="cam-mobile-panel">
+        <p class="cam-panel-title">Camera View</p>
+        <div class="cam-grid">
+          {#each cameraViewKeys as view}
+            <button
+              class="cam-btn-mobile"
+              on:click={() => { isAutoRotate = false; setCameraView(view); isCamExpanded = false; }}
+            >{view}</button>
+          {/each}
+        </div>
+        <div class="cam-divider"></div>
+        <div class="cam-toggles">
+          <button
+            class="cam-toggle-btn"
+            class:cam-toggle-active={isAutoRotate}
+            on:click={toggleAutoRotate}
+          >
+            AUTO {isAutoRotate ? "ON" : "OFF"}
+          </button>
+          <button
+            class="cam-toggle-btn"
+            class:cam-toggle-active={isAutoColor}
+            on:click={() => (isAutoColor = !isAutoColor)}
+          >
+            COLOR {isAutoColor ? "ON" : "OFF"}
+          </button>
+        </div>
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -524,6 +553,7 @@
     color: #ff4444;
   }
 
+  /* === DESKTOP: vertical side panel === */
   .controls-overlay {
     position: absolute;
     right: 1.5rem;
@@ -537,42 +567,6 @@
     border-radius: 1rem;
     backdrop-filter: blur(4px);
     z-index: 10;
-  }
-
-  /* Mobile Responsive Controls */
-  @media (max-width: 768px) {
-    .controls-overlay {
-      right: 0.5rem;
-      left: 0.5rem;
-      top: auto;
-      bottom: 5.5rem; /* Space for color selector toggle */
-      transform: none;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      justify-content: flex-start;
-      padding: 0.75rem;
-      gap: 0.5rem;
-      border-radius: 12px;
-      scrollbar-width: none; /* Hide scrollbar Firefox */
-    }
-
-    .controls-overlay::-webkit-scrollbar {
-      display: none; /* Hide scrollbar Chrome/Safari */
-    }
-
-    .cam-btn {
-      flex: 0 0 auto;
-      width: auto;
-      min-width: 70px;
-      padding: 0.5rem 0.75rem;
-    }
-
-    .divider {
-      width: 1px;
-      height: 20px;
-      margin: 0 4px;
-    }
   }
 
   .cam-btn {
@@ -593,9 +587,7 @@
     transform: translateY(-2px);
   }
 
-  .cam-btn:active {
-    transform: translateY(0);
-  }
+  .cam-btn:active { transform: translateY(0); }
 
   .cam-btn.active {
     background: rgba(255, 255, 255, 0.4);
@@ -608,5 +600,134 @@
     height: 1px;
     background: rgba(255, 255, 255, 0.2);
     margin: 4px 0;
+  }
+
+  /* Mobile wrapper hidden on desktop */
+  .cam-mobile-wrapper { display: none; }
+
+  /* === MOBILE: dropdown === */
+  @media (max-width: 768px) {
+    .controls-overlay { display: none; }
+
+    .cam-mobile-wrapper {
+      display: block;
+      position: absolute;
+      bottom: 3.75rem;
+      right: 1rem;
+      z-index: 20;
+    }
+
+    .cam-mobile-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 0.55rem 0.875rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+
+    .cam-mobile-toggle:hover {
+      background: rgba(0, 0, 0, 0.85);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .cam-icon { font-size: 1rem; }
+    .cam-label { font-weight: 600; letter-spacing: 0.02em; }
+
+    .cam-mobile-panel {
+      position: absolute;
+      bottom: calc(100% + 0.75rem);
+      right: 0;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 1.25rem;
+      min-width: 240px;
+      backdrop-filter: blur(12px);
+      animation: slideUp 0.25s ease;
+      z-index: 60;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .cam-panel-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: white;
+      margin: 0 0 0.75rem 0;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .cam-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.4rem;
+      margin-bottom: 0.875rem;
+    }
+
+    .cam-btn-mobile {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: white;
+      padding: 0.5rem 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      text-align: center;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .cam-btn-mobile:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .cam-btn-mobile:active { transform: scale(0.96); }
+
+    .cam-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.12);
+      margin: 0 0 0.75rem 0;
+    }
+
+    .cam-toggles {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .cam-toggle-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: white;
+      padding: 0.5rem 0.25rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .cam-toggle-btn:hover { background: rgba(255, 255, 255, 0.15); }
+
+    .cam-toggle-active {
+      background: rgba(255, 255, 255, 0.35) !important;
+      border-color: rgba(255, 255, 255, 0.6) !important;
+      color: #000 !important;
+      font-weight: 700;
+    }
   }
 </style>

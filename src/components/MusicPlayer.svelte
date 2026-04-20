@@ -1,228 +1,338 @@
 <script lang="ts">
-    import { onMount, createEventDispatcher } from "svelte";
+    import { onMount, onDestroy, createEventDispatcher } from "svelte";
     import {
         Play,
         Pause,
         SkipBack,
         SkipForward,
         Music,
-        Radio,
         Volume2,
     } from "@lucide/svelte";
 
     const dispatch = createEventDispatcher();
 
-    export function playSequence() {
-        if (!player) return;
+    // ── Playlist ────────────────────────────────────────────────────────────
+    // To add tracks: drop an .mp3 in public/music/ and append an entry here.
+    const tracks = [
+        { title: "Rearview Truth", file: "/music/Rearview_Truth.mp3" },
+    ];
 
-        // Play immediately without delay
-        player.unMute();
-        player.playVideo();
-        dispatch("play");
-    }
-
-    let player: any;
+    // ── State ───────────────────────────────────────────────────────────────
+    let audio: HTMLAudioElement;
+    let currentIndex = 0;
     let isPlaying = false;
-    let currentTitle = "Initializing...";
-    let isReady = false;
-    let volume = 50;
-    const PLAYLIST_ID = "PL71Q6dgIfRPGO8r-ejlTkKah8nZ0CEoC0";
+    let volume = 0.5;
+
+    $: currentTrack = tracks[currentIndex];
 
     onMount(() => {
-        // Helper to init player
-        const initPlayer = () => {
-            // @ts-ignore
-            player = new window.YT.Player("youtube-player-hidden-container", {
-                height: "0",
-                width: "0",
-                playerVars: {
-                    listType: "playlist",
-                    list: PLAYLIST_ID,
-                    autoplay: 0,
-                    controls: 0,
-                    showinfo: 0,
-                    modestbranding: 1,
-                    loop: 1,
-                    playsinline: 1,
-                },
-                events: {
-                    onReady: onPlayerReady,
-                    onStateChange: onPlayerStateChange,
-                    onError: onPlayerError,
-                },
-            });
-        };
+        audio = new Audio(currentTrack.file);
+        audio.volume = volume;
+        audio.addEventListener("ended", nextTrack);
+    });
 
-        // Load YouTube API if not already present
-        // @ts-ignore
-        if (!window.YT) {
-            const tag = document.createElement("script");
-            tag.src = "https://www.youtube.com/iframe_api";
-            const firstScriptTag = document.getElementsByTagName("script")[0];
-            firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-
-            // @ts-ignore
-            window.onYouTubeIframeAPIReady = () => {
-                initPlayer();
-            };
-        } else {
-            initPlayer();
+    onDestroy(() => {
+        if (audio) {
+            audio.pause();
+            audio.removeEventListener("ended", nextTrack);
         }
     });
 
-    function onPlayerReady(event: any) {
-        isReady = true;
-        currentTitle = "Ready to Play";
-        player.setVolume(volume);
-
-        // Auto-play removed in favor of explicit start for sync reliability
-        // setTimeout(() => {
-        //     if (player) {
-        //         player.playVideo();
-        //         dispatch("play");
-        //     }
-        // }, 5000);
-    }
-
-    function onPlayerStateChange(event: any) {
-        // @ts-ignore
-        if (event.data === window.YT.PlayerState.PLAYING) {
-            isPlaying = true;
-            updateTrackInfo();
-            // @ts-ignore
-        } else if (event.data === window.YT.PlayerState.PAUSED) {
+    function loadAndPlay(index: number) {
+        const wasPlaying = isPlaying;
+        audio.pause();
+        currentIndex = index;
+        audio.src = tracks[index].file;
+        audio.load();
+        if (wasPlaying) {
+            audio.play().then(() => { isPlaying = true; dispatch("play"); });
+        } else {
             isPlaying = false;
         }
     }
 
-    function onPlayerError(event: any) {
-        console.error("YouTube Player Error:", event.data);
-        currentTitle = "Error loading track";
-    }
-
-    function updateTrackInfo() {
-        if (player && player.getVideoData) {
-            const data = player.getVideoData();
-            if (data && data.title) {
-                currentTitle = data.title;
-            }
-        }
-    }
-
     function togglePlay() {
-        if (!player) return;
         if (isPlaying) {
-            player.pauseVideo();
+            audio.pause();
+            isPlaying = false;
         } else {
-            player.playVideo();
+            audio.play().then(() => { isPlaying = true; dispatch("play"); });
         }
     }
 
     function nextTrack() {
-        if (player) player.nextVideo();
+        loadAndPlay((currentIndex + 1) % tracks.length);
     }
 
     function prevTrack() {
-        if (player) player.previousVideo();
+        // Restart track if past 3 s, otherwise go to previous
+        if (audio.currentTime > 3) {
+            audio.currentTime = 0;
+        } else {
+            loadAndPlay((currentIndex - 1 + tracks.length) % tracks.length);
+        }
     }
 
     function updateVolume() {
-        if (player) player.setVolume(volume);
+        if (audio) audio.volume = volume;
     }
 </script>
 
-<div
-    class="fixed bottom-8 right-8 z-50 flex flex-col gap-3 rounded-2xl border border-surface-700 bg-surface-900/80 p-4 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:bg-surface-900/90 w-[280px]"
->
-    <!-- Hidden Player Div (0x0 size) -->
-    <div class="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
-        <div id="youtube-player-hidden-container"></div>
-    </div>
-
-    <!-- Header / Info -->
+<!-- ── Desktop card ─────────────────────────────────────────────────────── -->
+<div class="player-desktop">
     <div class="flex items-start gap-3">
-        <!-- Album Art / Icon Placeholder -->
-        <div
-            class="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600 to-tertiary-600 shadow-inner"
-        >
+        <div class="album-icon">
             {#if isPlaying}
-                <div
-                    class="absolute inset-0 rounded-xl bg-white opacity-20 animate-pulse"
-                ></div>
+                <div class="album-pulse"></div>
             {/if}
             <Music size={20} class="text-white drop-shadow-md" />
         </div>
 
         <div class="flex min-w-0 flex-col justify-center pt-0.5">
-            <div class="group relative overflow-hidden">
-                <p
-                    class="truncate whitespace-nowrap text-sm font-bold text-white transition-all group-hover:whitespace-normal"
-                    title={currentTitle}
-                >
-                    {currentTitle}
-                </p>
-            </div>
-            <div class="flex items-center gap-1 text-xs text-surface-400">
-                <Radio size={10} />
-                <span>Drift Phonk Playlist</span>
-            </div>
+            <p class="track-title" title={currentTrack.title}>{currentTrack.title}</p>
+            <p class="track-sub">BDL Soundtrack</p>
         </div>
     </div>
 
-    <!-- Progress Bar (Fake Visual Only currently as YT API polling is expensive for simple implementation) -->
-    <!-- <div class="h-1 w-full overflow-hidden rounded-full bg-surface-700">
-        <div class="h-full w-1/3 bg-primary-500 rounded-full" class:animate-pulse={isPlaying}></div>
-    </div> -->
-
-    <!-- Controls -->
     <div class="flex items-center justify-evenly pt-1">
-        <button
-            class="rounded-full p-2 text-surface-400 transition-all hover:bg-surface-800 hover:text-white hover:scale-110 active:scale-95 disabled:opacity-50"
-            on:click={prevTrack}
-            disabled={!isReady}
-            aria-label="Previous Track"
-        >
+        <button class="ctrl-btn" on:click={prevTrack} aria-label="Previous">
             <SkipBack size={22} strokeWidth={2} />
         </button>
-
-        <button
-            class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black shadow-lg shadow-white/10 transition-all hover:scale-110 hover:shadow-white/20 active:scale-95 disabled:opacity-50 disabled:bg-surface-600 disabled:text-surface-400"
-            on:click={togglePlay}
-            disabled={!isReady}
-            aria-label={isPlaying ? "Pause" : "Play"}
-        >
+        <button class="play-btn" on:click={togglePlay} aria-label={isPlaying ? "Pause" : "Play"}>
             {#if isPlaying}
                 <Pause size={24} fill="currentColor" strokeWidth={0} />
             {:else}
-                <Play
-                    size={24}
-                    fill="currentColor"
-                    strokeWidth={0}
-                    class="ml-1"
-                />
+                <Play size={24} fill="currentColor" strokeWidth={0} class="ml-1" />
             {/if}
         </button>
-
-        <button
-            class="rounded-full p-2 text-surface-400 transition-all hover:bg-surface-800 hover:text-white hover:scale-110 active:scale-95 disabled:opacity-50"
-            on:click={nextTrack}
-            disabled={!isReady}
-            aria-label="Next Track"
-        >
+        <button class="ctrl-btn" on:click={nextTrack} aria-label="Next">
             <SkipForward size={22} strokeWidth={2} />
         </button>
     </div>
 
-    <!-- Volume Control -->
     <div class="flex items-center gap-2 px-2 pt-2">
         <Volume2 size={16} class="text-surface-400" />
         <input
-            type="range"
-            min="0"
-            max="100"
-            bind:value={volume}
-            on:input={updateVolume}
-            class="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-surface-700 accent-primary-500"
+            type="range" min="0" max="1" step="0.01"
+            bind:value={volume} on:input={updateVolume}
+            class="volume-slider"
         />
     </div>
 </div>
+
+<!-- ── Mobile bar ───────────────────────────────────────────────────────── -->
+<div class="player-mobile">
+    <div class="album-icon-sm">
+        {#if isPlaying}<div class="album-pulse-sm"></div>{/if}
+        <Music size={15} class="text-white" />
+    </div>
+
+    <div class="flex min-w-0 flex-1 flex-col">
+        <p class="track-title-sm" title={currentTrack.title}>{currentTrack.title}</p>
+        <p class="track-sub-sm">BDL Soundtrack</p>
+    </div>
+
+    <div class="flex items-center gap-0.5 shrink-0">
+        <button class="ctrl-btn-sm" on:click={prevTrack} aria-label="Previous">
+            <SkipBack size={17} strokeWidth={2} />
+        </button>
+        <button class="play-btn-sm" on:click={togglePlay} aria-label={isPlaying ? "Pause" : "Play"}>
+            {#if isPlaying}
+                <Pause size={17} fill="currentColor" strokeWidth={0} />
+            {:else}
+                <Play size={17} fill="currentColor" strokeWidth={0} class="ml-px" />
+            {/if}
+        </button>
+        <button class="ctrl-btn-sm" on:click={nextTrack} aria-label="Next">
+            <SkipForward size={17} strokeWidth={2} />
+        </button>
+    </div>
+
+    <div class="flex items-center gap-1.5 shrink-0" style="width: 72px;">
+        <Volume2 size={12} class="text-surface-400 shrink-0" />
+        <input
+            type="range" min="0" max="1" step="0.01"
+            bind:value={volume} on:input={updateVolume}
+            class="volume-slider"
+        />
+    </div>
+</div>
+
+<style>
+    /* ── Desktop card ─────────────────────────────────────── */
+    .player-desktop {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        border-radius: 1rem;
+        border: 1px solid rgb(51 65 85);
+        background: rgba(15, 23, 42, 0.8);
+        padding: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        backdrop-filter: blur(16px);
+        width: 280px;
+        transition: background 0.3s;
+    }
+    .player-desktop:hover { background: rgba(15, 23, 42, 0.92); }
+
+    .album-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+        flex-shrink: 0;
+        border-radius: 0.75rem;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .album-pulse {
+        position: absolute;
+        inset: 0;
+        border-radius: 0.75rem;
+        background: white;
+        opacity: 0.2;
+        animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite;
+    }
+
+    .track-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: white;
+    }
+    .track-sub { font-size: 0.7rem; color: rgb(148 163 184); margin-top: 1px; }
+
+    .ctrl-btn {
+        border-radius: 9999px;
+        padding: 0.5rem;
+        color: rgb(148 163 184);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .ctrl-btn:hover { background: rgb(30 41 59); color: white; transform: scale(1.1); }
+    .ctrl-btn:active { transform: scale(0.95); }
+
+    .play-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 9999px;
+        background: white;
+        color: black;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(255,255,255,0.15);
+        transition: all 0.2s;
+    }
+    .play-btn:hover { transform: scale(1.1); }
+    .play-btn:active { transform: scale(0.95); }
+
+    .volume-slider {
+        height: 6px;
+        width: 100%;
+        cursor: pointer;
+        appearance: none;
+        border-radius: 9999px;
+        background: rgb(51 65 85);
+        accent-color: #6366f1;
+    }
+
+    /* ── Mobile bar ──────────────────────────────────────── */
+    .player-mobile { display: none; }
+
+    @media (max-width: 768px) {
+        .player-desktop { display: none; }
+
+        .player-mobile {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.5rem 0.875rem;
+            background: rgba(10, 15, 30, 0.92);
+            border-top: 1px solid rgba(51, 65, 85, 0.8);
+            backdrop-filter: blur(16px);
+        }
+
+        .album-icon-sm {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.125rem;
+            height: 2.125rem;
+            flex-shrink: 0;
+            border-radius: 0.5rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+        .album-pulse-sm {
+            position: absolute;
+            inset: 0;
+            border-radius: 0.5rem;
+            background: white;
+            opacity: 0.2;
+            animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite;
+        }
+
+        .track-title-sm {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1.2;
+        }
+        .track-sub-sm { font-size: 0.6rem; color: rgb(148 163 184); }
+
+        .ctrl-btn-sm {
+            border-radius: 9999px;
+            padding: 0.375rem;
+            color: rgb(148 163 184);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .ctrl-btn-sm:hover { color: white; }
+        .ctrl-btn-sm:active { transform: scale(0.88); }
+
+        .play-btn-sm {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.125rem;
+            height: 2.125rem;
+            border-radius: 9999px;
+            background: white;
+            color: black;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+        }
+        .play-btn-sm:hover { transform: scale(1.08); }
+        .play-btn-sm:active { transform: scale(0.92); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.2; }
+        50% { opacity: 0.35; }
+    }
+</style>

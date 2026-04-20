@@ -5,17 +5,16 @@
 
     export let selectedColor: string = "#F0F0F0";
 
-    // Preset colors for car customization
     const presetColors = [
-        { name: "White", hex: "#FFFFFF" },
-        { name: "Black", hex: "#000000" },
-        { name: "Red", hex: "#DC2626" },
-        { name: "Blue", hex: "#2563EB" },
+        { name: "White",  hex: "#FFFFFF" },
+        { name: "Black",  hex: "#000000" },
+        { name: "Red",    hex: "#DC2626" },
+        { name: "Blue",   hex: "#2563EB" },
         { name: "Yellow", hex: "#FACC15" },
-        { name: "Green", hex: "#16A34A" },
+        { name: "Green",  hex: "#16A34A" },
         { name: "Orange", hex: "#EA580C" },
         { name: "Purple", hex: "#9333EA" },
-        { name: "Gray", hex: "#6B7280" },
+        { name: "Gray",   hex: "#6B7280" },
         { name: "Silver", hex: "#D1D5DB" },
     ];
 
@@ -23,13 +22,11 @@
     let isExpanded = false;
 
     function selectPresetColor(hexColor: string) {
-        const hexNumber = parseInt(hexColor.replace("#", ""), 16);
-        dispatch("colorSelected", hexNumber);
+        dispatch("colorSelected", parseInt(hexColor.replace("#", ""), 16));
     }
 
     function selectCustomColor() {
-        const hexNumber = parseInt(customColor.replace("#", ""), 16);
-        dispatch("colorSelected", hexNumber);
+        dispatch("colorSelected", parseInt(customColor.replace("#", ""), 16));
     }
 
     function toggleExpanded() {
@@ -38,7 +35,7 @@
 </script>
 
 <div class="color-selector">
-    <button class="toggle-btn" on:click={toggleExpanded}>
+    <button class="toggle-btn" on:click={toggleExpanded} aria-label={isExpanded ? "Close colors" : "Open colors"}>
         <span class="icon">{isExpanded ? "✕" : "🎨"}</span>
         <span class="label">{isExpanded ? "Close" : "Colors"}</span>
     </button>
@@ -47,7 +44,6 @@
         <div class="color-panel">
             <h3 class="panel-title">Car Colors</h3>
 
-            <!-- Preset Colors -->
             <div class="preset-grid">
                 {#each presetColors as color}
                     <button
@@ -64,21 +60,11 @@
                 {/each}
             </div>
 
-            <!-- Custom Color Picker -->
             <div class="custom-picker">
-                <label for="custom-color" class="picker-label"
-                    >Custom Color</label
-                >
+                <label for="custom-color" class="picker-label">Custom Color</label>
                 <div class="picker-row">
-                    <input
-                        type="color"
-                        id="custom-color"
-                        bind:value={customColor}
-                        class="color-input"
-                    />
-                    <button class="apply-btn" on:click={selectCustomColor}
-                        >Apply</button
-                    >
+                    <input type="color" id="custom-color" bind:value={customColor} class="color-input" />
+                    <button class="apply-btn" on:click={selectCustomColor}>Apply</button>
                 </div>
             </div>
         </div>
@@ -114,9 +100,7 @@
         transform: translateY(-2px);
     }
 
-    .icon {
-        font-size: 1.2rem;
-    }
+    .icon { font-size: 1.2rem; }
 
     .label {
         font-weight: 600;
@@ -137,14 +121,8 @@
     }
 
     @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
     }
 
     .panel-title {
@@ -179,24 +157,18 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
-    .color-btn:active {
-        transform: scale(0.95);
-    }
+    .color-btn:active { transform: scale(0.95); }
 
-    /* Checkered background for white color */
     .checkered-bg {
         position: absolute;
         inset: 0;
-        background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
+        background-image:
+            linear-gradient(45deg, #ccc 25%, transparent 25%),
             linear-gradient(-45deg, #ccc 25%, transparent 25%),
             linear-gradient(45deg, transparent 75%, #ccc 75%),
             linear-gradient(-45deg, transparent 75%, #ccc 75%);
         background-size: 8px 8px;
-        background-position:
-            0 0,
-            0 4px,
-            4px -4px,
-            -4px 0px;
+        background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
         z-index: -1;
     }
 
@@ -229,9 +201,7 @@
         transition: all 0.2s ease;
     }
 
-    .color-input:hover {
-        border-color: rgba(255, 255, 255, 0.4);
-    }
+    .color-input:hover { border-color: rgba(255, 255, 255, 0.4); }
 
     .apply-btn {
         background: rgba(255, 255, 255, 0.15);
@@ -251,30 +221,22 @@
         transform: translateY(-1px);
     }
 
-    .apply-btn:active {
-        transform: translateY(0);
-    }
-
-    /* Mobile responsive */
-    @media (max-width: 640px) {
+    /* Mobile: raise above the music bar (~52px) and shrink label */
+    @media (max-width: 768px) {
         .color-selector {
+            bottom: 3.75rem;
             left: 1rem;
-            bottom: 1rem;
         }
 
         .toggle-btn {
-            padding: 0.6rem 1rem;
-            font-size: 0.85rem;
+            padding: 0.55rem 0.875rem;
+            font-size: 0.8rem;
+            border-radius: 10px;
         }
 
         .color-panel {
-            min-width: 250px;
+            min-width: 260px;
             padding: 1.25rem;
-        }
-
-        .preset-grid {
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.4rem;
         }
 
         .color-btn {

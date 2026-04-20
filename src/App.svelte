@@ -17,7 +17,6 @@
   let showShaderLab = false;
   let showAbout = false;
   let hasStarted = false;
-  let musicPlayerComponent: MusicPlayer;
   let isMenuOpen = false;
 
   let selectedColorHex: number | null = null; // Default 3D value
@@ -57,13 +56,11 @@
         on:click={() => {
           hasStarted = true;
           isAutoRotate = true;
-          if (musicPlayerComponent) musicPlayerComponent.playSequence();
         }}
         on:keydown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             hasStarted = true;
             isAutoRotate = true;
-            if (musicPlayerComponent) musicPlayerComponent.playSequence();
           }
         }}
       >
@@ -188,8 +185,5 @@
     <ColorSelector selectedColor="#F0F0F0" on:colorSelected={onColorSelected} />
   {/if}
 
-  <MusicPlayer
-    bind:this={musicPlayerComponent}
-    on:play={() => (isAutoRotate = true)}
-  />
+  <MusicPlayer on:play={() => (isAutoRotate = true)} />
 </main>
