@@ -138,6 +138,53 @@
                         </li>
                     </ul>
                 </div>
+
+                <!-- Founders Section -->
+                <div class="pt-4 border-t border-surface-800">
+                    <h4
+                        class="text-lg font-semibold text-white mb-4 flex items-center gap-2"
+                    >
+                        <span>👥</span>
+                        {$_("about.founders_title")}
+                    </h4>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Pace -->
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-primary-400">Pace</span>
+                                <span class="text-xs text-surface-400">({$_("about.pace_role")})</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="https://github.com/patrickcmserrano/" target="_blank" rel="noopener noreferrer" class="text-xs bg-surface-800 hover:bg-surface-700 text-surface-200 px-2 py-1 rounded transition-colors border border-surface-700">
+                                    {$_("about.view_github")}
+                                </a>
+                                <a href="https://www.linkedin.com/in/patrickcmserrano/" target="_blank" rel="noopener noreferrer" class="text-xs bg-surface-800 hover:bg-surface-700 text-surface-200 px-2 py-1 rounded transition-colors border border-surface-700">
+                                    {$_("about.view_linkedin")}
+                                </a>
+                                <a href="https://patrickcmserrano.github.io/" target="_blank" rel="noopener noreferrer" class="text-xs bg-surface-800 hover:bg-surface-700 text-surface-200 px-2 py-1 rounded transition-colors border border-surface-700">
+                                    {$_("about.view_website")}
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Alface -->
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-primary-400">Alface</span>
+                                <span class="text-xs text-surface-400">({$_("about.alface_role")})</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="https://Instagram.com/yamandustudios" target="_blank" rel="noopener noreferrer" class="text-xs bg-surface-800 hover:bg-surface-700 text-surface-200 px-2 py-1 rounded transition-colors border border-surface-700">
+                                    {$_("about.view_instagram")}
+                                </a>
+                                <a href="https://wa.me/5532991127980" target="_blank" rel="noopener noreferrer" class="text-xs bg-surface-800 hover:bg-surface-700 text-surface-200 px-2 py-1 rounded transition-colors border border-surface-700">
+                                    {$_("about.contact_whatsapp")}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="mt-8 text-center border-t border-surface-800 pt-4">

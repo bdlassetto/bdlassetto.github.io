@@ -31,7 +31,15 @@ export const translations = {
     'about.pillar_3d': 'High Quality 3D',
     'about.pillar_optimization': 'Optimization',
     'about.pillar_rules': 'Solid Rules',
-    'about.tagline': 'The ultimate drag racing experience.'
+    'about.tagline': 'The ultimate drag racing experience.',
+    'about.founders_title': 'Founders',
+    'about.pace_role': 'Software Engineer + Developer',
+    'about.alface_role': '3D Modeller',
+    'about.view_github': 'GitHub',
+    'about.view_linkedin': 'LinkedIn',
+    'about.view_website': 'Website',
+    'about.view_instagram': 'Instagram',
+    'about.contact_whatsapp': 'Contact'
   },
   pt: {
     greeting: 'Olá',
@@ -56,7 +64,15 @@ export const translations = {
     'about.pillar_3d': 'Modelagem 3D',
     'about.pillar_optimization': 'Otimização',
     'about.pillar_rules': 'Regras Sólidas',
-    'about.tagline': 'A experiência definitiva de arrancada.'
+    'about.tagline': 'A experiência definitiva de arrancada.',
+    'about.founders_title': 'Fundadores',
+    'about.pace_role': 'Software Engineer + Developer',
+    'about.alface_role': '3D Modeller',
+    'about.view_github': 'GitHub',
+    'about.view_linkedin': 'LinkedIn',
+    'about.view_website': 'Website',
+    'about.view_instagram': 'Instagram',
+    'about.contact_whatsapp': 'Contato'
   },
   es: {
     greeting: 'Hola',
@@ -80,8 +96,16 @@ export const translations = {
     'about.pillar_physics': 'Física Refinada',
     'about.pillar_3d': 'Modelado 3D',
     'about.pillar_optimization': 'Optimización',
-    'about.pillar_rules': 'Reglas Sólidas',
-    'about.tagline': 'La experiencia definitiva de arrancones.'
+    'about.pillar_rules': 'Regras Sólidas',
+    'about.tagline': 'La experiencia definitiva de arrancones.',
+    'about.founders_title': 'Fundadores',
+    'about.pace_role': 'Software Engineer + Developer',
+    'about.alface_role': '3D Modeller',
+    'about.view_github': 'GitHub',
+    'about.view_linkedin': 'LinkedIn',
+    'about.view_website': 'Sitio Web',
+    'about.view_instagram': 'Instagram',
+    'about.contact_whatsapp': 'Contacto'
   }
 };
 
