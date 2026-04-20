@@ -122,6 +122,15 @@ O deploy é realizado automaticamente via **GitHub Actions** para o **GitHub Pag
 
 ---
 
+## 👥 Founders
+
+O projeto foi idealizado e construído por:
+
+*   **Pace (Patrick Serrano):** Software Engineer + Developer. Responsável pela arquitetura de software, lógica de interface reativa, integração 3D e sistemas de segurança.
+*   **Alface (Yamandu Justen):** 3D Modeller. Responsável pela criação, otimização e refinamento estético de todos os modelos tridimensionais da experiência.
+
+---
+
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
