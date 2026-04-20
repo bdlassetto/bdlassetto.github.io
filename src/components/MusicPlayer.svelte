@@ -14,7 +14,8 @@
     // ── Playlist ────────────────────────────────────────────────────────────
     // To add tracks: drop an .mp3 in public/music/ and append an entry here.
     const tracks = [
-        { title: "Rearview Truth", file: "/music/Rearview_Truth.mp3" },
+        { title: "Rearview Truth",    file: "/music/Rearview_Truth.mp3" },
+        { title: "Tactical Friction", file: "/music/Tactical_Friction.mp3" },
     ];
 
     // ── State ───────────────────────────────────────────────────────────────
