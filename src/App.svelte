@@ -9,13 +9,15 @@
   import ShaderPlayground from "./components/ShaderPlayground.svelte";
   import MusicPlayer from "./components/MusicPlayer.svelte";
   import AboutModal from "./components/AboutModal.svelte";
-  import { Menu, X } from "@lucide/svelte";
+  import AppInfoModal from "./components/AppInfoModal.svelte";
+  import { Menu, X, Github } from "@lucide/svelte";
 
   // Inicializa o suporte a idiomas
   i18n.initialize();
 
   let showShaderLab = false;
   let showAbout = false;
+  let showAppInfo = false;
   let hasStarted = false;
   let isMenuOpen = false;
 
@@ -88,20 +90,26 @@
     </button>
 
     <!-- Desktop Buttons -->
-    <div class="hidden md:flex gap-2">
+    <div class="hidden md:flex items-center gap-1.5">
       <button
-        class="btn bg-surface-700 p-2 text-sm text-white hover:bg-surface-600 rounded"
+        class="hud-icon-btn"
         on:click={() => (showAbout = true)}
-      >
-        {$_("about.title")}
-      </button>
+        title={$_("about.title")}
+        aria-label={$_("about.title")}
+      >ℹ</button>
       <button
-        class="btn bg-surface-700 p-2 text-sm text-white hover:bg-surface-600 rounded"
+        class="hud-icon-btn"
+        on:click={() => (showAppInfo = true)}
+        title="About this app"
+        aria-label="About this app"
+      ><Github size={15} /></button>
+      <button
+        class="hud-icon-btn"
         on:click={() => (showShaderLab = !showShaderLab)}
-        title={showShaderLab ? "Back to Car" : "Go to Shader Lab"}
-      >
-        {showShaderLab ? "🚗 Car Viewer" : "🧪 Shader Lab"}
-      </button>
+        title={showShaderLab ? "Back to Car Viewer" : "Shader Lab"}
+        aria-label={showShaderLab ? "Back to Car Viewer" : "Shader Lab"}
+      >{showShaderLab ? "🚗" : "🧪"}</button>
+      <div class="hud-divider"></div>
       <LanguageSelector />
       <ThemeToggle />
     </div>
@@ -118,13 +126,17 @@
     >
       <button
         class="btn bg-surface-700 p-3 text-left text-sm text-white hover:bg-surface-600 rounded-lg flex items-center justify-between"
-        on:click={() => {
-          showAbout = true;
-          isMenuOpen = false;
-        }}
+        on:click={() => { showAbout = true; isMenuOpen = false; }}
       >
         <span>{$_("about.title")}</span>
         <span>ℹ️</span>
+      </button>
+      <button
+        class="btn bg-surface-700 p-3 text-left text-sm text-white hover:bg-surface-600 rounded-lg flex items-center justify-between"
+        on:click={() => { showAppInfo = true; isMenuOpen = false; }}
+      >
+        <span>About this app</span>
+        <Github size={15} />
       </button>
       <button
         class="btn bg-surface-700 p-3 text-left text-sm text-white hover:bg-surface-600 rounded-lg flex items-center justify-between"
@@ -150,6 +162,10 @@
 
   {#if showAbout}
     <AboutModal on:close={() => (showAbout = false)} />
+  {/if}
+
+  {#if showAppInfo}
+    <AppInfoModal on:close={() => (showAppInfo = false)} />
   {/if}
 
   {#if showShaderLab}
@@ -187,3 +203,36 @@
 
   <MusicPlayer on:play={() => (isAutoRotate = true)} />
 </main>
+
+<style>
+  :global(.hud-icon-btn) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.625rem;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgb(51 65 85);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  }
+  :global(.hud-icon-btn:hover) {
+    background: rgba(15, 23, 42, 0.95);
+    border-color: rgb(100 116 139);
+    transform: translateY(-1px);
+  }
+  :global(.hud-icon-btn:active) {
+    transform: translateY(0);
+  }
+
+  .hud-divider {
+    width: 1px;
+    height: 1.25rem;
+    background: rgb(51 65 85);
+    margin: 0 0.125rem;
+  }
+</style>

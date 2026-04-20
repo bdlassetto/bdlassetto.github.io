@@ -79,40 +79,37 @@
     }
 </script>
 
-<!-- ── Desktop card ─────────────────────────────────────────────────────── -->
+<!-- ── Desktop bar (compact single row) ─────────────────────────────── -->
 <div class="player-desktop">
-    <div class="flex items-start gap-3">
-        <div class="album-icon">
-            {#if isPlaying}
-                <div class="album-pulse"></div>
-            {/if}
-            <Music size={20} class="text-white drop-shadow-md" />
-        </div>
-
-        <div class="flex min-w-0 flex-col justify-center pt-0.5">
-            <p class="track-title" title={currentTrack.title}>{currentTrack.title}</p>
-            <p class="track-sub">BDL Soundtrack</p>
-        </div>
+    <!-- Icon -->
+    <div class="album-icon">
+        {#if isPlaying}<div class="album-pulse"></div>{/if}
+        <Music size={15} class="text-white" />
     </div>
 
-    <div class="flex items-center justify-evenly pt-1">
+    <!-- Track title -->
+    <p class="track-title" title={currentTrack.title}>{currentTrack.title}</p>
+
+    <!-- Controls -->
+    <div class="flex items-center gap-0.5 shrink-0">
         <button class="ctrl-btn" on:click={prevTrack} aria-label="Previous">
-            <SkipBack size={22} strokeWidth={2} />
+            <SkipBack size={16} strokeWidth={2} />
         </button>
         <button class="play-btn" on:click={togglePlay} aria-label={isPlaying ? "Pause" : "Play"}>
             {#if isPlaying}
-                <Pause size={24} fill="currentColor" strokeWidth={0} />
+                <Pause size={15} fill="currentColor" strokeWidth={0} />
             {:else}
-                <Play size={24} fill="currentColor" strokeWidth={0} class="ml-1" />
+                <Play size={15} fill="currentColor" strokeWidth={0} class="ml-px" />
             {/if}
         </button>
         <button class="ctrl-btn" on:click={nextTrack} aria-label="Next">
-            <SkipForward size={22} strokeWidth={2} />
+            <SkipForward size={16} strokeWidth={2} />
         </button>
     </div>
 
-    <div class="flex items-center gap-2 px-2 pt-2">
-        <Volume2 size={16} class="text-surface-400" />
+    <!-- Volume -->
+    <div class="flex items-center gap-1.5 shrink-0" style="width: 60px;">
+        <Volume2 size={12} class="text-surface-400 shrink-0" />
         <input
             type="range" min="0" max="1" step="0.01"
             bind:value={volume} on:input={updateVolume}
@@ -160,85 +157,85 @@
 </div>
 
 <style>
-    /* ── Desktop card ─────────────────────────────────────── */
+    /* ── Desktop bar (compact horizontal) ────────────────── */
     .player-desktop {
         position: fixed;
         bottom: 2rem;
         right: 2rem;
         z-index: 50;
         display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        border-radius: 1rem;
+        align-items: center;
+        gap: 0.625rem;
+        border-radius: 0.875rem;
         border: 1px solid rgb(51 65 85);
         background: rgba(15, 23, 42, 0.8);
-        padding: 1rem;
+        padding: 0.625rem 0.875rem;
         box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         backdrop-filter: blur(16px);
         width: 280px;
-        transition: background 0.3s;
+        transition: background 0.2s;
     }
-    .player-desktop:hover { background: rgba(15, 23, 42, 0.92); }
+    .player-desktop:hover { background: rgba(15, 23, 42, 0.95); }
 
     .album-icon {
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 3rem;
-        height: 3rem;
+        width: 1.875rem;
+        height: 1.875rem;
         flex-shrink: 0;
-        border-radius: 0.75rem;
+        border-radius: 0.5rem;
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
     }
     .album-pulse {
         position: absolute;
         inset: 0;
-        border-radius: 0.75rem;
+        border-radius: 0.5rem;
         background: white;
         opacity: 0.2;
         animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite;
     }
 
     .track-title {
+        flex: 1;
+        min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-size: 0.875rem;
-        font-weight: 700;
+        font-size: 0.75rem;
+        font-weight: 600;
         color: white;
     }
-    .track-sub { font-size: 0.7rem; color: rgb(148 163 184); margin-top: 1px; }
 
     .ctrl-btn {
         border-radius: 9999px;
-        padding: 0.5rem;
+        padding: 0.3rem;
         color: rgb(148 163 184);
         background: transparent;
         border: none;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.15s;
     }
-    .ctrl-btn:hover { background: rgb(30 41 59); color: white; transform: scale(1.1); }
-    .ctrl-btn:active { transform: scale(0.95); }
+    .ctrl-btn:hover { color: white; transform: scale(1.1); }
+    .ctrl-btn:active { transform: scale(0.92); }
 
     .play-btn {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 3rem;
-        height: 3rem;
+        width: 1.875rem;
+        height: 1.875rem;
         border-radius: 9999px;
         background: white;
         color: black;
         border: none;
         cursor: pointer;
-        box-shadow: 0 4px 14px rgba(255,255,255,0.15);
-        transition: all 0.2s;
+        box-shadow: 0 2px 8px rgba(255,255,255,0.12);
+        transition: all 0.15s;
     }
-    .play-btn:hover { transform: scale(1.1); }
-    .play-btn:active { transform: scale(0.95); }
+    .play-btn:hover { transform: scale(1.08); }
+    .play-btn:active { transform: scale(0.93); }
 
     .volume-slider {
         height: 6px;

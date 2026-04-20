@@ -30,6 +30,7 @@
 
   let selectedMaterialName: string | null = null;
   let isCamExpanded = false;
+  let isCamDesktopOpen = false;
 
   // Camera animation state
   let isAnimatingCamera = false;
@@ -476,20 +477,38 @@
     <div class="status error">{error}</div>
   {/if}
 
-  <!-- Desktop: vertical side panel -->
-  <div class="controls-overlay">
-    {#each cameraViewKeys as view}
-      <button
-        class="cam-btn"
-        on:click={() => { isAutoRotate = false; setCameraView(view); }}
-      >{view}</button>
-    {/each}
-    <div class="divider"></div>
-    <button class="cam-btn" class:active={isAutoRotate} on:click={toggleAutoRotate}>
-      AUTO {isAutoRotate ? "ON" : "OFF"}
-    </button>
-    <button class="cam-btn" class:active={isAutoColor} on:click={() => (isAutoColor = !isAutoColor)}>
-      COLOR {isAutoColor ? "ON" : "OFF"}
+  <!-- Desktop: camera card + toggle (bottom-right, above music player) -->
+  <div class="cam-desktop-wrap">
+    {#if isCamDesktopOpen}
+      <div class="cam-desktop-panel">
+        <div class="cam-desktop-grid">
+          {#each cameraViewKeys as view}
+            <button
+              class="cam-desktop-view-btn"
+              on:click={() => { isAutoRotate = false; setCameraView(view); isCamDesktopOpen = false; }}
+            >{view}</button>
+          {/each}
+        </div>
+        <div class="cam-desktop-divider"></div>
+        <div class="cam-desktop-toggles">
+          <button
+            class="cam-desktop-toggle-btn"
+            class:cam-desktop-toggle-active={isAutoRotate}
+            on:click={toggleAutoRotate}
+          >AUTO {isAutoRotate ? "ON" : "OFF"}</button>
+          <button
+            class="cam-desktop-toggle-btn"
+            class:cam-desktop-toggle-active={isAutoColor}
+            on:click={() => (isAutoColor = !isAutoColor)}
+          >COLOR {isAutoColor ? "ON" : "OFF"}</button>
+        </div>
+      </div>
+    {/if}
+
+    <button class="cam-desktop-toggle" on:click={() => (isCamDesktopOpen = !isCamDesktopOpen)}>
+      <span class="cam-desktop-icon">📷</span>
+      <span class="cam-desktop-label">Camera</span>
+      <span class="cam-desktop-arrow">{isCamDesktopOpen ? "▲" : "▼"}</span>
     </button>
   </div>
 
@@ -553,53 +572,108 @@
     color: #ff4444;
   }
 
-  /* === DESKTOP: vertical side panel === */
-  .controls-overlay {
+  /* === DESKTOP: camera card at bottom-right === */
+  .cam-desktop-wrap {
     position: absolute;
-    right: 1.5rem;
-    top: 55%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    background: rgba(0, 0, 0, 0.6);
-    padding: 0.6rem;
-    border-radius: 1rem;
-    backdrop-filter: blur(4px);
-    z-index: 10;
+    bottom: 5.5rem;  /* sits above the compact music bar (~3rem tall + 2rem bottom + 0.5rem gap) */
+    right: 2rem;
+    z-index: 20;
+    width: 280px;    /* matches music player width */
   }
 
-  .cam-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+  .cam-desktop-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgb(51 65 85);
     color: white;
-    padding: 0.4rem 0.8rem;
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    transition: background 0.2s;
+  }
+  .cam-desktop-toggle:hover { background: rgba(15, 23, 42, 0.95); }
+
+  .cam-desktop-icon { font-size: 1rem; }
+  .cam-desktop-label { font-size: 0.875rem; font-weight: 600; flex: 1; text-align: left; }
+  .cam-desktop-arrow { font-size: 0.65rem; opacity: 0.6; }
+
+  .cam-desktop-panel {
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgb(51 65 85);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    animation: slideUp 0.2s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .cam-desktop-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.375rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cam-desktop-view-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgb(203 213 225);
+    padding: 0.4rem 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    font-size: 0.8rem;
-    transition: all 0.2s;
-    width: 80px;
+    font-size: 0.75rem;
     text-align: center;
+    transition: all 0.15s;
   }
-
-  .cam-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+  .cam-desktop-view-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.25);
   }
+  .cam-desktop-view-btn:active { transform: scale(0.96); }
 
-  .cam-btn:active { transform: translateY(0); }
-
-  .cam-btn.active {
-    background: rgba(255, 255, 255, 0.4);
-    border-color: #ffffff;
-    font-weight: bold;
-    color: #000;
-  }
-
-  .divider {
+  .cam-desktop-divider {
     height: 1px;
-    background: rgba(255, 255, 255, 0.2);
-    margin: 4px 0;
+    background: rgba(255, 255, 255, 0.08);
+    margin-bottom: 0.75rem;
+  }
+
+  .cam-desktop-toggles {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .cam-desktop-toggle-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgb(148 163 184);
+    padding: 0.45rem 0.25rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .cam-desktop-toggle-btn:hover { background: rgba(255, 255, 255, 0.12); color: white; }
+
+  .cam-desktop-toggle-active {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    color: white !important;
+    font-weight: 700;
   }
 
   /* Mobile wrapper hidden on desktop */
