@@ -539,6 +539,42 @@
     z-index: 10;
   }
 
+  /* Mobile Responsive Controls */
+  @media (max-width: 768px) {
+    .controls-overlay {
+      right: 0.5rem;
+      left: 0.5rem;
+      top: auto;
+      bottom: 5.5rem; /* Space for color selector toggle */
+      transform: none;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      justify-content: flex-start;
+      padding: 0.75rem;
+      gap: 0.5rem;
+      border-radius: 12px;
+      scrollbar-width: none; /* Hide scrollbar Firefox */
+    }
+
+    .controls-overlay::-webkit-scrollbar {
+      display: none; /* Hide scrollbar Chrome/Safari */
+    }
+
+    .cam-btn {
+      flex: 0 0 auto;
+      width: auto;
+      min-width: 70px;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .divider {
+      width: 1px;
+      height: 20px;
+      margin: 0 4px;
+    }
+  }
+
   .cam-btn {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
